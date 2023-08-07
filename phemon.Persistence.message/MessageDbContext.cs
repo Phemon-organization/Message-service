@@ -12,7 +12,7 @@ namespace phemon.Persistence.message
     {
         private readonly ICurrentUserService _currentUserService;
 
-        public DbSet<Messages> Message { get; set; }
+        public DbSet<MessageEntity> Message { get; set; }
 
         public MessageDbContext(DbContextOptions<MessageDbContext> options)
             : base(options)

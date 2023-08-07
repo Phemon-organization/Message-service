@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace phemon.Core.message.Entities
 {
-    public class Messages
+    public class MessageEntity
     {
         public int Id { get; set; }
         public string Message { get; set; }

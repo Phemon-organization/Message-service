@@ -10,7 +10,7 @@ namespace phemon.Persistence.message
 {
     public interface IMessageDbContext
     {
-        DbSet<Messages> Message { get; set; }
+        DbSet<MessageEntity> Message { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

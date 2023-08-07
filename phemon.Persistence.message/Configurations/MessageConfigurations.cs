@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace phemon.Persistence.message.Configurations
 {
-    public class MessageConfigurations : IEntityTypeConfiguration<Messages>
+    public class MessageConfigurations : IEntityTypeConfiguration<MessageEntity>
     {
-        public void Configure(EntityTypeBuilder<Messages> builder)
+        public void Configure(EntityTypeBuilder<MessageEntity> builder)
         {
             builder.Property(e => e.Id)
                 .HasColumnName("MessageId")

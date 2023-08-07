@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Mvc;
 using phemon.API.messages.Services;
 using phemon.Application.message;
@@ -33,6 +34,28 @@ builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
     }
 });
 
+//--- Add services to the container.
+// needed to load configuration from appsettings.json
+builder.Services.AddOptions();
+
+// needed to store rate limit counters and ip rules
+builder.Services.AddMemoryCache();
+
+// load general configuration from appsettings.json
+builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
+
+builder.Services.AddInMemoryRateLimiting();
+
+// inject counter and rules stores
+builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+
+// configuration (resolvers, counter key builders)
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+
+
+
 // Add library project references
 builder.Services.AddApplication();
 builder.Services.AddPersistence(builder.Configuration);
@@ -62,6 +85,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Enable IP Rate Limiting Middleware
+app.UseIpRateLimiting();
 
 app.UseHttpsRedirection();
 

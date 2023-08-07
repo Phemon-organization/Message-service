@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using phemon.API.messages.Contracts;
 using phemon.API.messages.Routes;
 using phemon.Application.message.Command.CreateMessage;
+using phemon.Application.message.Query.Messages.GetMessageById;
+using phemon.Application.message.Query.Messages.GetMessages;
 
 namespace phemon.API.messages.Controllers
 {
@@ -32,5 +34,33 @@ namespace phemon.API.messages.Controllers
 
             return Created(ApiRoutes.Message.Create, command);
         }
+
+        [HttpGet]
+        [Route(ApiRoutes.Message.GetAll)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAll()
+        {
+            var query = new GetMessagesQuery();
+            var results = await _mediator.Send(query);
+
+            return Ok(results);
+        }
+
+        [HttpGet]
+        [Route(ApiRoutes.Message.Get)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Get([FromQuery] int id)
+        {
+            var query = new GetMessageByIdQuery()
+            {
+                Id = id
+            };
+            await _mediator.Send(query);
+
+            return Ok(query);
+        }
+
     }
 }

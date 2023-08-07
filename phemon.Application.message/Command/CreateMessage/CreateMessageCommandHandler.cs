@@ -23,7 +23,7 @@ namespace phemon.Application.message.Command.CreateMessage
 
         public async Task<MessageDTO> Handle(CreateMessageCommand request, CancellationToken cancellationToken)
         {
-            Messages message = new()
+            MessageEntity message = new()
             {
                 Message = request.Message,
                 UserId = request.UserId
