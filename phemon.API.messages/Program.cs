@@ -57,7 +57,7 @@ builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>()
 builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
 
 // Add library project references
-builder.Services.AddApplication();
+builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddPersistence(builder.Configuration);
 
 
@@ -76,9 +76,8 @@ builder.Services.AddCors(options =>
         options =>
         {
             options.WithOrigins(builder.Configuration.GetSection("Origins").Value)
-            .WithMethods("OPTIONS", "GET", "POST", "PUT", "DELETE")
-            .AllowCredentials();
-
+               .AllowAnyMethod()
+               .AllowAnyHeader();
         });
 });
 
@@ -89,6 +88,7 @@ builder.Services.AddApiVersioning(options =>
     options.DefaultApiVersion = new ApiVersion(1, 0);
     options.ReportApiVersions = true;
 });
+
 
 var app = builder.Build();
 
@@ -112,13 +112,11 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseEndpoints(endpoints =>
+app.MapHealthChecks("/health", new HealthCheckOptions
 {
-    endpoints.MapHealthChecks("/healthcheck", new()
-    {
-        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-    });
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
-app.MapHealthChecksUI(options => options.UIPath = "/dashboard");
+
+app.MapHealthChecksUI();
 
 app.Run();
