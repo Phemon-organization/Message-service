@@ -117,6 +117,6 @@ app.MapHealthChecks("/health", new HealthCheckOptions
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
 
-app.MapHealthChecksUI();
+app.MapHealthChecksUI(options => options.UIPath = "/dashboard");
 
 app.Run();

@@ -15,7 +15,8 @@ namespace phemon.Application.message
                 .AddHealthChecks()
                 .AddSqlServer(configuration.GetConnectionString("Net6WebApiConnection"));
 
-            services.AddHealthChecksUI()
+            services
+                .AddHealthChecksUI()
                 .AddInMemoryStorage();
 
             // Register MediatR Services
