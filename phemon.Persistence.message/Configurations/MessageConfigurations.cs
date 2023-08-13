@@ -14,7 +14,7 @@ namespace phemon.Persistence.message.Configurations
         public void Configure(EntityTypeBuilder<MessageEntity> builder)
         {
             builder.Property(e => e.Id)
-                .HasColumnName("MessageId")
+                .HasColumnName("Id")
                 .ValueGeneratedOnAdd();
 
             builder.Property(e => e.Message)

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using phemon.API.messages.Contracts;
 using phemon.API.messages.Routes;
 using phemon.Application.message.Command.CreateMessage;
+using phemon.Application.message.Command.DeleteMessage;
 using phemon.Application.message.Query.Messages.GetMessageById;
 using phemon.Application.message.Query.Messages.GetMessages;
 
@@ -27,7 +28,7 @@ namespace phemon.API.messages.Controllers
             var command = new CreateMessageCommand()
             {
                 Message = request.Message,
-                UserId= request.UserId
+                UserId = request.UserId
             };
 
             await _mediator.Send(command);
@@ -62,5 +63,16 @@ namespace phemon.API.messages.Controllers
             return Ok(query);
         }
 
+        [HttpDelete]
+        [Route(ApiRoutes.Message.Delete)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Delete([FromQuery] int id)
+        {
+            var command = new DeleteMessageCommand(){ Id = id };
+            var result = await _mediator.Send(command);
+
+            return Ok(result);
+        }
     }
 }

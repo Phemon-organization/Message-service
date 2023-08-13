@@ -1,11 +1,8 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using phemon.Application.message.HealthChecks;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace phemon.Application.message
 {
@@ -13,6 +10,17 @@ namespace phemon.Application.message
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
+            // Register Application Health Checks
+            services.AddHealthChecks()
+                .AddCheck<CustomHealthCheck>(nameof(CustomHealthCheck));
+
+            //Register HealthCheckUI
+            services.AddHealthChecksUI(options =>
+            {
+                options.AddHealthCheckEndpoint("Healthcheck API", "/healtcheck");
+            })
+            .AddInMemoryStorage();
+
             // Register MediatR Services
             services.AddMediatR(Assembly.GetExecutingAssembly());
 

@@ -1,8 +1,10 @@
 using AspNetCoreRateLimit;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
 using phemon.API.messages.Services;
 using phemon.Application.message;
-using phemon.Core.message.Common;
 using phemon.Persistence.message;
 using System.Reflection;
 
@@ -54,8 +56,6 @@ builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounte
 builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
 
-
-
 // Add library project references
 builder.Services.AddApplication();
 builder.Services.AddPersistence(builder.Configuration);
@@ -68,6 +68,19 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+// Register and configure CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "CorsPolicy",
+        options =>
+        {
+            options.WithOrigins(builder.Configuration.GetSection("Origins").Value)
+            .WithMethods("OPTIONS", "GET", "POST", "PUT", "DELETE")
+            .AllowCredentials();
+
+        });
+});
 
 // Register and Configure API versioning
 builder.Services.AddApiVersioning(options =>
@@ -91,8 +104,21 @@ app.UseIpRateLimiting();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
+app.UseRouting();
+
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHealthChecks("/healthcheck", new()
+    {
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    });
+});
+app.MapHealthChecksUI(options => options.UIPath = "/dashboard");
 
 app.Run();

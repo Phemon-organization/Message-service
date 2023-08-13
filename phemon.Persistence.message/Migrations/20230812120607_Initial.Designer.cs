@@ -12,7 +12,7 @@ using phemon.Persistence.message;
 namespace phemon.Persistence.message.Migrations
 {
     [DbContext(typeof(MessageDbContext))]
-    [Migration("20230803144309_Initial")]
+    [Migration("20230812120607_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -158,19 +158,31 @@ namespace phemon.Persistence.message.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("phemon.Core.message.Entities.Messages", b =>
+            modelBuilder.Entity("phemon.Core.message.Entities.MessageEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTimeOffset>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("LastModified")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
 
                     b.Property<Guid>("UserId")
+                        .IsUnicode(true)
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");

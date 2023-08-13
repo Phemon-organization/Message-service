@@ -2,11 +2,6 @@
 using phemon.Application.message.DTO;
 using phemon.Core.message.Entities;
 using phemon.Persistence.message;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace phemon.Application.message.Command.CreateMessage
 {
@@ -26,7 +21,7 @@ namespace phemon.Application.message.Command.CreateMessage
             MessageEntity message = new()
             {
                 Message = request.Message,
-                UserId = request.UserId
+                UserId = request.UserId,
             };
 
             _dbcontext.Message.Add(message);
@@ -34,8 +29,7 @@ namespace phemon.Application.message.Command.CreateMessage
 
             MessageDTO messageDTO = new()
             {
-                Message = request.Message,
-                UserId = request.UserId
+                UserId = request.UserId,
             };
             
             return messageDTO;

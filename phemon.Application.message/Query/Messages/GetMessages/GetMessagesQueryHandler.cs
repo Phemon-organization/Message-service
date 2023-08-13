@@ -25,7 +25,7 @@ namespace phemon.Application.message.Query.Messages.GetMessages
                 {
                     Id = message.Id,
                     Message = message.Message,
-                    UserId = message.UserId
+                    UserId = message.UserId,
                 })
                 .ToListAsync(cancellationToken);
                 

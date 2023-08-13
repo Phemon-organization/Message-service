@@ -12,8 +12,6 @@ namespace phemon.Persistence.message
     {
         private readonly ICurrentUserService _currentUserService;
 
-        public DbSet<MessageEntity> Message { get; set; }
-
         public MessageDbContext(DbContextOptions<MessageDbContext> options)
             : base(options)
         {
@@ -33,18 +31,23 @@ namespace phemon.Persistence.message
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        entry.Entity.CreatedBy = _currentUserService.UserId;
                         entry.Entity.Created = DateTime.UtcNow;
+                        entry.Entity.LastModified = DateTime.UtcNow;
                         break;
                     case EntityState.Modified:
-                        entry.Entity.LastModifiedBy = _currentUserService.UserId;
                         entry.Entity.LastModified = DateTime.UtcNow;
                         break;
                 }
-
             }
-
             return await base.SaveChangesAsync(cancellationToken);
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(MessageDbContext).Assembly);
+            base.OnModelCreating(modelBuilder);
+        }
+
+        public DbSet<MessageEntity> Message { get; set; }
     }
 }
