@@ -1,7 +1,4 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
-using System.Net.Mime;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace phemon.Application.message.HealthChecks
 {
@@ -15,7 +12,7 @@ namespace phemon.Application.message.HealthChecks
                 return Task.FromResult(
                     HealthCheckResult.Healthy("The service is up and running."));
             }
-            catch (Exception)
+            catch
             {
                 return Task.FromResult(
                     new HealthCheckResult(

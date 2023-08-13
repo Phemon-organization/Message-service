@@ -11,13 +11,12 @@ namespace phemon.Application.message
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             // Register Application Health Checks
-            services.AddHealthChecks()
-                .AddCheck<CustomHealthCheck>(nameof(CustomHealthCheck));
+            services.AddHealthChecks();
 
             //Register HealthCheckUI
             services.AddHealthChecksUI(options =>
             {
-                options.AddHealthCheckEndpoint("Healthcheck API", "/healtcheck");
+                options.AddHealthCheckEndpoint("Healthcheck API", "/healthcheck");
             })
             .AddInMemoryStorage();
 
