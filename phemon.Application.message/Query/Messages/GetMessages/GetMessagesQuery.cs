@@ -10,6 +10,6 @@ namespace phemon.Application.message.Query.Messages.GetMessages
 {
     public class GetMessagesQuery : IRequest<IList<MessageDTO>>
     {
-
+        public string Cachekey { get; set; }
     }
 }

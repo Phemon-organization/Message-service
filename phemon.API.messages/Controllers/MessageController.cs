@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using phemon.API.messages.Contracts;
 using phemon.API.messages.Routes;
+using phemon.API.messages.Services;
 using phemon.Application.message.Command.CreateMessage;
 using phemon.Application.message.Command.DeleteMessage;
 using phemon.Application.message.Query.Messages.GetMessageById;
@@ -13,10 +14,12 @@ namespace phemon.API.messages.Controllers
     public class MessageController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ICacheKeyService _cacheKeyService;
 
-        public MessageController(IMediator mediator)
+        public MessageController(IMediator mediator, ICacheKeyService cacheKeyService)
         {
             _mediator = mediator;
+            _cacheKeyService = cacheKeyService;
         }
 
         [HttpPost]
@@ -31,7 +34,9 @@ namespace phemon.API.messages.Controllers
                 UserId = request.UserId
             };
 
-            await _mediator.Send(command);
+            var result = await _mediator.Send(command);
+
+            if (result is null) return BadRequest("Could not create new message.");
 
             return Created(ApiRoutes.Message.Create, command);
         }
@@ -42,8 +47,8 @@ namespace phemon.API.messages.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAll()
         {
-            var query = new GetMessagesQuery();
-            var results = await _mediator.Send(query);
+            string cacheKey = _cacheKeyService.GenerateCacheKey("MyData");
+            var results = await _mediator.Send(new GetMessagesQuery { Cachekey = cacheKey });
 
             return Ok(results);
         }
@@ -51,6 +56,7 @@ namespace phemon.API.messages.Controllers
         [HttpGet]
         [Route(ApiRoutes.Message.Get)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Get([FromQuery] int id)
         {
@@ -59,6 +65,8 @@ namespace phemon.API.messages.Controllers
                 Id = id
             };
             await _mediator.Send(query);
+
+            if (query is null) return NotFound("Can't find hero with that id.");
 
             return Ok(query);
         }

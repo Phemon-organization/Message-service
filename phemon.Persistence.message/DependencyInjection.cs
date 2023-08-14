@@ -17,6 +17,11 @@ namespace phemon.Persistence.message
             services.AddScoped<IMessageDbContext>(provider =>
                 provider.GetService<MessageDbContext>());
 
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = configuration.GetValue<string>("RedisCacheUrl");
+            });
+
             return services;
         }
     }

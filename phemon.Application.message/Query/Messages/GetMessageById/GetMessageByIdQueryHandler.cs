@@ -17,7 +17,8 @@ namespace phemon.Application.message.Query.Messages.GetMessageById
         {
             MessageEntity result = await Task.Run(() => _dbContext
             .Message
-                .Where(s => s.Id.Equals(request.Id))
+                .Where(s => 
+                    s.Id.Equals(request.Id))
                 .FirstOrDefault(), cancellationToken);
 
             MessageDTO message = new()

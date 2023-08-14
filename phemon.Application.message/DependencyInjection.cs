@@ -22,6 +22,8 @@ namespace phemon.Application.message
             // Register MediatR Services
             services.AddMediatR(Assembly.GetExecutingAssembly());
 
+
+
             return services;
         }
     }
